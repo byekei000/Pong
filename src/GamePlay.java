@@ -23,10 +23,10 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     }
 
     public void paint(Graphics g) {
-        g.clearRect(0, 0, 500, 500);
-        g.fillRect(ball.x, ball.y, 10, 10);
-        g.fillRect(width - 50, paddle.y, 10, 80);
-        g.fillRect(50, paddleL.y, 10, 80);
+        g.clearRect(0, 0, width, height);
+        g.fillOval(ball.x, ball.y, ball.width, ball.height);
+        g.fillRect(width - 50, paddle.y, paddle.width, paddle.height);
+        g.fillRect(50, paddleL.y, paddleL.width, paddleL.height);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -41,7 +41,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         } else if (paddle.dir == -1) {
             paddle.y -= paddle.spd;
         }
-        if (ball.y + 10 >= height || ball.y <= 0) {
+        if (ball.y + ball.height >= height || ball.y <= 0) {
             ball.dirY = -ball.dirY;
         }
         if (paddle.y + paddle.height >= height) {
@@ -49,11 +49,23 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
         } else if (paddle.y <= 0) {
             paddle.y = 0;
         }
-        paddleL.y = ball.y - 40;
+        if(paddleL.y+paddleL.height/2 < ball.y+ball.height/2){
+            paddleL.dir = 1;
+        } else if(paddleL.y+paddleL.height/2 > ball.y+ball.height/2){
+            paddleL.dir = -1;
+        } else paddleL.dir = 0;
+        if(paddleL.dir == 1){
+            paddleL.y += paddleL.spd;
+        } else if(paddleL.dir == -1){
+            paddleL.y -= paddleL.spd;
+        }
         if (paddleL.y + paddleL.height >= height) {
             paddleL.y = height - paddleL.height;
         } else if (paddleL.y <= 0) {
             paddleL.y = 0;
+        }
+        if(ball.x < 0 || ball.x > width){
+            ball.x = width/2;
         }
         if (new Rectangle(ball.x, ball.y, ball.width, ball.height).intersects(new Rectangle(width - 50, paddle.y, paddle.width, paddle.height))) {
             ball.dirX = -ball.dirX;
@@ -67,10 +79,10 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_LEFT) {
             paddle.dir = -1;
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_RIGHT) {
             paddle.dir = 1;
         }
     }
